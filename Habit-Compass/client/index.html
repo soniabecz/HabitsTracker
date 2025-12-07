@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Habits Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="header-container">
+        <div class="header-left">
+          <div class="logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </div>
+          <div class="header-title-group">
+            <h1 class="header-title" data-testid="text-app-title">Habits Tracker</h1>
+            <span id="read-only-badge" class="badge badge-secondary hidden" data-testid="badge-read-only">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              Tryb tylko do odczytu
+            </span>
+          </div>
+        </div>
+        <div class="header-right">
+          <button id="theme-toggle" class="btn btn-icon" data-testid="button-theme-toggle" aria-label="Przełącz motyw">
+            <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg id="theme-icon-sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+          <button id="share-btn" class="btn btn-primary hidden" data-testid="button-share">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            Udostępnij
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="grid-container">
+        <div class="main-column">
+          <section id="add-habit-section" class="section">
+            <h2 class="section-title">Dodaj nawyk</h2>
+            <form id="add-habit-form" class="add-habit-form" data-testid="form-add-habit">
+              <input 
+                type="text" 
+                id="habit-input" 
+                class="input" 
+                placeholder="Nazwa nawyku..." 
+                required
+                data-testid="input-habit-name"
+              />
+              <button type="submit" class="btn btn-primary" data-testid="button-add-habit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Dodaj
+              </button>
+            </form>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">Twoje nawyki (<span id="habits-count">0</span>)</h2>
+            <div id="habits-list" class="habits-list" data-testid="habits-list"></div>
+            <div id="empty-habits" class="empty-state" data-testid="empty-habits-list">
+              <div class="empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+              </div>
+              <p class="empty-text">Nie masz jeszcze żadnych nawyków</p>
+              <p class="empty-subtext" id="empty-subtext">Dodaj swój pierwszy nawyk powyżej</p>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">Widok dzienny</h2>
+            <div id="daily-view" class="daily-view card" data-testid="daily-view">
+              <div class="daily-header">
+                <span id="today-date" class="today-date"></span>
+              </div>
+              <div id="daily-habits-grid" class="daily-habits-grid"></div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="sidebar-column">
+          <h2 class="section-title">Statystyki</h2>
+          <div id="statistics-panel" class="statistics-panel" data-testid="panel-statistics">
+            <div id="stats-empty" class="card stats-empty">
+              <div class="empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+              </div>
+              <p class="empty-text">Dodaj nawyki, aby zobaczyć statystyki</p>
+            </div>
+            <div id="stats-charts" class="stats-charts hidden">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Ukończone dni (ostatnie 7 dni)</h3>
+                </div>
+                <div class="card-content">
+                  <div class="chart-container">
+                    <canvas id="bar-chart" data-testid="chart-bar"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Trend realizacji (%)</h3>
+                </div>
+                <div class="card-content">
+                  <div class="chart-container">
+                    <canvas id="line-chart" data-testid="chart-line"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>Dane są przechowywane lokalnie w Twojej przeglądarce</p>
+    </footer>
+
+    <div id="share-modal" class="modal hidden" data-testid="modal-share">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Udostępnij dashboard</h3>
+          <button id="modal-close" class="btn btn-icon" data-testid="button-modal-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-description">Skopiuj poniższy link, aby udostępnić swój dashboard w trybie tylko do odczytu:</p>
+          <div class="share-link-container">
+            <input type="text" id="share-link-input" class="input" readonly data-testid="input-share-link" />
+            <button id="copy-link-btn" class="btn btn-primary" data-testid="button-copy-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Kopiuj
+            </button>
+          </div>
+          <p id="copy-success" class="copy-success hidden">Link skopiowany!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
