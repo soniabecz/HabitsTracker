@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard Nawyków - Śledź swoje nawyki każdego dnia i osiągaj cele">
+    <title>Habits Tracker - Dashboard Nawyków</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <i class="fas fa-clipboard-check"></i>
+                    Habits Tracker
+                </h1>
+                <div class="header-actions">
+                    <button class="btn-icon theme-toggle" id="theme-toggle" data-testid="button-theme-toggle" title="Przełącz tryb ciemny">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                    <button class="btn btn-primary" id="add-habit-btn" data-testid="button-add-habit">
+                        <i class="fas fa-plus"></i>
+                        <span>Dodaj Nawyk</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-nav">
+        <div class="container">
+            <div class="tabs">
+                <button class="tab-item active" data-view="daily" data-testid="tab-daily">
+                    <i class="fas fa-calendar-day"></i>
+                    Widok Dzienny
+                </button>
+                <button class="tab-item" data-view="statistics" data-testid="tab-statistics">
+                    <i class="fas fa-chart-line"></i>
+                    Statystyki
+                </button>
+                <button class="tab-item" data-view="all-habits" data-testid="tab-all-habits">
+                    <i class="fas fa-list"></i>
+                    Wszystkie Nawyki
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            
+            <!-- Daily View -->
+            <div class="view active" id="daily-view">
+                <div class="view-header">
+                    <h2 class="view-title">Dzisiejsze Nawyki</h2>
+                    <p class="view-subtitle" id="current-date" data-testid="text-current-date"></p>
+                </div>
+                
+                <div class="habits-grid" id="daily-habits-list" data-testid="list-daily-habits">
+                    <!-- Daily habits will be inserted here by JavaScript -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="daily-empty-state" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="empty-title">Brak nawyków</h3>
+                    <p class="empty-message">Dodaj swój pierwszy nawyk, aby zacząć!</p>
+                    <button class="btn btn-primary" id="add-habit-empty" data-testid="button-add-habit-empty">
+                        <i class="fas fa-plus"></i>
+                        Dodaj Nawyk
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistics View -->
+            <div class="view" id="statistics-view">
+                <div class="view-header">
+                    <h2 class="view-title">Statystyki Nawyków</h2>
+                    <p class="view-subtitle">Ostatnie 7 dni</p>
+                </div>
+
+                <!-- Quick Stats Cards -->
+                <div class="stats-cards" id="stats-cards-container">
+                    <!-- Stats cards will be inserted here -->
+                </div>
+
+                <!-- Top Achievements Section -->
+                <div class="achievements-section" id="achievements-section">
+                    <h3 class="section-title">Osiągnięcia i Serie</h3>
+                    <div class="achievements-grid" id="achievements-grid">
+                        <!-- Achievements will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <!-- 7-Day Completion Chart -->
+                    <div class="chart-card">
+                        <h3 class="chart-title">Realizacja w ostatnich 7 dniach</h3>
+                        <div class="chart-container">
+                            <canvas id="completion-chart" data-testid="chart-completion"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Habits Completion Bar Chart -->
+                    <div class="chart-card">
+                        <h3 class="chart-title">Dni zrealizowane według nawyku</h3>
+                        <div class="chart-container">
+                            <canvas id="habits-bar-chart" data-testid="chart-habits-bar"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar Heatmap Section -->
+                <div class="heatmap-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        Heatmapa Kalendarza - Ostatnie 365 dni
+                    </h3>
+                    <div id="calendar-heatmap" data-testid="calendar-heatmap">
+                        <!-- Heatmap will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Share Section -->
+                <div class="share-section">
+                    <div class="share-header">
+                        <h3 class="share-title">
+                            <i class="fas fa-share-alt"></i>
+                            Udostępnij Dashboard
+                        </h3>
+                    </div>
+                    <p class="share-description">
+                        Udostępnij swój dashboard nawyków innym! Możesz wyeksportować dane jako JSON lub skopiować link do udostępnienia.
+                    </p>
+                    <div class="share-actions">
+                        <button class="btn btn-primary" id="export-data-btn" data-testid="button-export-data">
+                            <i class="fas fa-download"></i>
+                            Eksportuj Dane (JSON)
+                        </button>
+                        <button class="btn btn-secondary" id="generate-share-link-btn" data-testid="button-share-link">
+                            <i class="fas fa-link"></i>
+                            Generuj Link
+                        </button>
+                    </div>
+                    <div class="share-link-container" id="share-link-container" style="display: none;">
+                        <input type="text" class="form-input share-link-input" id="share-link-input" readonly>
+                        <button class="btn btn-primary" id="copy-link-btn" data-testid="button-copy-link">
+                            <i class="fas fa-copy"></i>
+                            Kopiuj
+                        </button>
+                    </div>
+                    <p class="copy-message" id="copy-message">Link skopiowany do schowka!</p>
+                </div>
+
+                <!-- Empty State for Statistics -->
+                <div class="empty-state" id="stats-empty-state" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="empty-title">Brak danych statystycznych</h3>
+                    <p class="empty-message">Zacznij śledzić nawyki, aby zobaczyć statystyki!</p>
+                </div>
+            </div>
+
+            <!-- All Habits View -->
+            <div class="view" id="all-habits-view">
+                <div class="view-header">
+                    <h2 class="view-title">Zarządzanie Nawykami</h2>
+                    <p class="view-subtitle">Wszystkie Twoje nawyki</p>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="category-filters" id="category-filters">
+                    <button class="category-filter-btn active" data-category="all" data-testid="filter-all">
+                        <i class="fas fa-th"></i> Wszystkie
+                    </button>
+                    <button class="category-filter-btn" data-category="health" data-testid="filter-health">
+                        <i class="fas fa-heartbeat"></i> Zdrowie
+                    </button>
+                    <button class="category-filter-btn" data-category="productivity" data-testid="filter-productivity">
+                        <i class="fas fa-briefcase"></i> Produktywność
+                    </button>
+                    <button class="category-filter-btn" data-category="learning" data-testid="filter-learning">
+                        <i class="fas fa-book"></i> Nauka
+                    </button>
+                    <button class="category-filter-btn" data-category="wellness" data-testid="filter-wellness">
+                        <i class="fas fa-spa"></i> Samopoczucie
+                    </button>
+                    <button class="category-filter-btn" data-category="other" data-testid="filter-other">
+                        <i class="fas fa-star"></i> Inne
+                    </button>
+                </div>
+
+                <div class="habits-list" id="all-habits-list" data-testid="list-all-habits">
+                    <!-- All habits will be inserted here -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="all-habits-empty-state" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3 class="empty-title">Brak nawyków</h3>
+                    <p class="empty-message">Dodaj swój pierwszy nawyk, aby zacząć budować lepsze rutyny!</p>
+                    <button class="btn btn-primary" id="add-habit-all-empty" data-testid="button-add-habit-all-empty">
+                        <i class="fas fa-plus"></i>
+                        Dodaj Nawyk
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Add Habit Modal -->
+    <div class="modal" id="add-habit-modal">
+        <div class="modal-overlay" data-testid="overlay-modal"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Dodaj Nowy Nawyk</h3>
+                <button class="modal-close" id="close-modal-btn" data-testid="button-close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="add-habit-form" class="modal-form">
+                <div class="form-group">
+                    <label for="habit-name" class="form-label">Nazwa nawyku</label>
+                    <input 
+                        type="text" 
+                        id="habit-name" 
+                        class="form-input" 
+                        placeholder="np. Ćwiczenia, Czytanie książki..."
+                        required
+                        maxlength="50"
+                        data-testid="input-habit-name"
+                    >
+                    <span class="form-hint">Maksymalnie 50 znaków</span>
+                </div>
+                <div class="form-group">
+                    <label for="habit-category" class="form-label">Kategoria</label>
+                    <select 
+                        id="habit-category" 
+                        class="form-select" 
+                        data-testid="select-habit-category"
+                    >
+                        <option value="health">💚 Zdrowie</option>
+                        <option value="productivity">💼 Produktywność</option>
+                        <option value="learning">📚 Nauka</option>
+                        <option value="wellness">🧘 Samopoczucie</option>
+                        <option value="other" selected>⭐ Inne</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-add-btn" data-testid="button-cancel-add">
+                        Anuluj
+                    </button>
+                    <button type="submit" class="btn btn-primary" data-testid="button-submit-habit">
+                        <i class="fas fa-check"></i>
+                        Dodaj Nawyk
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3 class="modal-title">Usuń Nawyk</h3>
+                <button class="modal-close" id="close-delete-modal" data-testid="button-close-delete-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="delete-message">
+                    Czy na pewno chcesz usunąć nawyk <strong id="delete-habit-name"></strong>? 
+                    Ta akcja jest nieodwracalna i usunie wszystkie powiązane dane.
+                </p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancel-delete-btn" data-testid="button-cancel-delete">
+                    Anuluj
+                </button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn" data-testid="button-confirm-delete">
+                    <i class="fas fa-trash"></i>
+                    Usuń Nawyk
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast" data-testid="toast-notification">
+        <div class="toast-content">
+            <i class="toast-icon fas fa-check-circle"></i>
+            <span class="toast-message" id="toast-message"></span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/app.js"></script>
+    <script src="/charts.js"></script>
+    <script src="/heatmap.js"></script>
+</body>
+</html>
