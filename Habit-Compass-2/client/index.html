@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Habits Tracker - Śledź swoje nawyki</title>
+  <meta name="description" content="Aplikacja do śledzenia codziennych nawyków z systemem odznak, serii i celów tygodniowych. Buduj dobre nawyki krok po kroku." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="header-container">
+        <div class="header-left">
+          <div class="logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </div>
+          <div class="header-title-group">
+            <h1 class="header-title" data-testid="text-app-title">Habits Tracker</h1>
+            <span id="read-only-badge" class="badge badge-secondary hidden" data-testid="badge-read-only">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              Tryb tylko do odczytu
+            </span>
+          </div>
+        </div>
+        <div class="header-right">
+          <button id="theme-toggle" class="btn btn-icon" data-testid="button-theme-toggle" aria-label="Przełącz motyw">
+            <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg id="theme-icon-sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+          <button id="share-btn" class="btn btn-primary hidden" data-testid="button-share">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            Udostępnij
+          </button>
+          <div id="user-info" class="user-info hidden" data-testid="user-info">
+            <img id="user-avatar" class="user-avatar hidden" src="" alt="Avatar">
+            <div id="user-avatar-placeholder" class="user-avatar-placeholder"></div>
+            <span id="user-name" class="user-name" data-testid="text-user-name"></span>
+            <a href="/api/logout" id="logout-btn" class="btn btn-secondary btn-sm" data-testid="button-logout">Wyloguj</a>
+          </div>
+          <a href="/api/login" id="login-btn" class="btn btn-primary hidden" data-testid="button-login">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            Zaloguj się
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <nav id="main-tabs" class="main-tabs" data-testid="nav-tabs">
+        <button id="tab-personal" class="tab-btn active" data-testid="tab-personal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          Moje nawyki
+        </button>
+        <button id="tab-groups" class="tab-btn" data-testid="tab-groups">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          Nawyki grupowe
+        </button>
+      </nav>
+
+      <div id="personal-content" class="tab-content active">
+        <div class="grid-container">
+          <div class="main-column">
+            <section id="add-habit-section" class="section">
+            <h2 class="section-title">Dodaj nawyk</h2>
+            <form id="add-habit-form" class="add-habit-form" data-testid="form-add-habit">
+              <div class="form-row">
+                <input 
+                  type="text" 
+                  id="habit-input" 
+                  class="input" 
+                  placeholder="Nazwa nawyku..." 
+                  required
+                  data-testid="input-habit-name"
+                />
+              </div>
+              <div class="form-row form-row-options">
+                <select id="habit-category" class="select" data-testid="select-category">
+                  <option value="health">Zdrowie</option>
+                  <option value="work">Praca</option>
+                  <option value="personal">Rozwój</option>
+                  <option value="other" selected>Inne</option>
+                </select>
+                <button type="submit" class="btn btn-primary" data-testid="button-add-habit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Dodaj
+                </button>
+              </div>
+              <div class="form-row days-selector" data-testid="days-selector">
+                <span class="days-label">Dni:</span>
+                <div class="days-checkboxes">
+                  <label class="day-checkbox"><input type="checkbox" name="habit-day" value="1" checked data-testid="day-mon" /><span>Pn</span></label>
+                  <label class="day-checkbox"><input type="checkbox" name="habit-day" value="2" checked data-testid="day-tue" /><span>Wt</span></label>
+                  <label class="day-checkbox"><input type="checkbox" name="habit-day" value="3" checked data-testid="day-wed" /><span>Sr</span></label>
+                  <label class="day-checkbox"><input type="checkbox" name="habit-day" value="4" checked data-testid="day-thu" /><span>Cz</span></label>
+                  <label class="day-checkbox"><input type="checkbox" name="habit-day" value="5" checked data-testid="day-fri" /><span>Pt</span></label>
+                  <label class="day-checkbox"><input type="checkbox" name="habit-day" value="6" checked data-testid="day-sat" /><span>Sb</span></label>
+                  <label class="day-checkbox"><input type="checkbox" name="habit-day" value="0" checked data-testid="day-sun" /><span>Nd</span></label>
+                </div>
+              </div>
+            </form>
+          </section>
+
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">Twoje nawyki (<span id="habits-count">0</span>)</h2>
+            </div>
+            <div id="category-filter" class="category-filter" data-testid="category-filter"></div>
+            <div id="habits-list" class="habits-list" data-testid="habits-list"></div>
+            <div id="empty-habits" class="empty-state" data-testid="empty-habits-list">
+              <div class="empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+              </div>
+              <p class="empty-text">Nie masz jeszcze żadnych nawyków</p>
+              <p class="empty-subtext" id="empty-subtext">Dodaj swój pierwszy nawyk powyżej</p>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">Widok dzienny</h2>
+            <div id="daily-view" class="daily-view card" data-testid="daily-view">
+              <div class="daily-header">
+                <span id="today-date" class="today-date"></span>
+              </div>
+              <div id="daily-habits-grid" class="daily-habits-grid"></div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="sidebar-column">
+          <section class="section">
+            <h2 class="section-title">Podsumowanie</h2>
+            <div id="insights-panel" class="insights-panel" data-testid="panel-insights"></div>
+          </section>
+          
+          <section class="section">
+            <h2 class="section-title">Statystyki</h2>
+            <div id="statistics-panel" class="statistics-panel" data-testid="panel-statistics">
+              <div id="stats-empty" class="card stats-empty">
+                <div class="empty-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </div>
+                <p class="empty-text">Dodaj nawyki, aby zobaczyć statystyki</p>
+              </div>
+              <div id="stats-charts" class="stats-charts hidden">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Ukończone dni (ostatnie 7 dni)</h3>
+                  </div>
+                  <div class="card-content">
+                    <div class="chart-container">
+                      <canvas id="bar-chart" data-testid="chart-bar"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Trend realizacji (%)</h3>
+                  </div>
+                  <div class="card-content">
+                    <div class="chart-container">
+                      <canvas id="line-chart" data-testid="chart-line"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </aside>
+        </div>
+      </div>
+
+      <div id="groups-content" class="tab-content hidden">
+        <div id="groups-login-prompt" class="login-prompt" data-testid="groups-login-prompt">
+          <div class="login-prompt-content card">
+            <div class="login-prompt-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h2 class="login-prompt-title">Nawyki grupowe</h2>
+            <p class="login-prompt-text">Zaloguj się, aby tworzyć grupy i śledzić nawyki wspólnie z rodziną i znajomymi.</p>
+            <a href="/api/login" class="btn btn-primary btn-lg" data-testid="button-login-groups">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
+              </svg>
+              Zaloguj się
+            </a>
+          </div>
+        </div>
+
+        <div id="groups-panel" class="groups-panel hidden" data-testid="groups-panel">
+          <div class="groups-sidebar">
+            <div class="groups-header">
+              <h2>Twoje grupy</h2>
+              <div class="groups-actions">
+                <button id="create-group-btn" class="btn btn-primary btn-sm" data-testid="button-create-group">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Utwórz
+                </button>
+                <button id="join-group-btn" class="btn btn-secondary btn-sm" data-testid="button-join-group">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                    <polyline points="10 17 15 12 10 7"></polyline>
+                    <line x1="15" y1="12" x2="3" y2="12"></line>
+                  </svg>
+                  Dołącz
+                </button>
+              </div>
+            </div>
+            <div id="groups-list" class="groups-list" data-testid="groups-list"></div>
+            <div id="groups-empty" class="empty-state" data-testid="groups-empty">
+              <p class="empty-text">Nie masz jeszcze żadnych grup</p>
+              <p class="empty-subtext">Utwórz grupę lub dołącz do istniejącej</p>
+            </div>
+          </div>
+
+          <div id="group-detail" class="group-detail hidden" data-testid="group-detail">
+            <div class="group-detail-header">
+              <h2 id="group-name" class="group-name" data-testid="text-group-name"></h2>
+              <button id="show-invite-btn" class="btn btn-secondary btn-sm" data-testid="button-show-invite">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                Zaproś
+              </button>
+            </div>
+            <div id="group-members" class="group-members" data-testid="group-members"></div>
+            
+            <div class="group-habits-section">
+              <h3>Nawyki grupowe</h3>
+              <form id="add-group-habit-form" class="add-habit-form" data-testid="form-add-group-habit">
+                <div class="form-row">
+                  <input type="text" id="group-habit-input" class="input" placeholder="Nazwa nawyku..." required data-testid="input-group-habit-name" />
+                </div>
+                <div class="form-row form-row-options">
+                  <select id="group-habit-category" class="select" data-testid="select-group-category">
+                    <option value="health">Zdrowie</option>
+                    <option value="work">Praca</option>
+                    <option value="personal">Rozwój</option>
+                    <option value="other" selected>Inne</option>
+                  </select>
+                  <button type="submit" class="btn btn-primary" data-testid="button-add-group-habit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Dodaj
+                  </button>
+                </div>
+                <div class="form-row days-selector" data-testid="group-days-selector">
+                  <span class="days-label">Dni:</span>
+                  <div class="days-checkboxes">
+                    <label class="day-checkbox"><input type="checkbox" name="group-habit-day" value="1" checked data-testid="group-day-mon" /><span>Pn</span></label>
+                    <label class="day-checkbox"><input type="checkbox" name="group-habit-day" value="2" checked data-testid="group-day-tue" /><span>Wt</span></label>
+                    <label class="day-checkbox"><input type="checkbox" name="group-habit-day" value="3" checked data-testid="group-day-wed" /><span>Sr</span></label>
+                    <label class="day-checkbox"><input type="checkbox" name="group-habit-day" value="4" checked data-testid="group-day-thu" /><span>Cz</span></label>
+                    <label class="day-checkbox"><input type="checkbox" name="group-habit-day" value="5" checked data-testid="group-day-fri" /><span>Pt</span></label>
+                    <label class="day-checkbox"><input type="checkbox" name="group-habit-day" value="6" checked data-testid="group-day-sat" /><span>Sb</span></label>
+                    <label class="day-checkbox"><input type="checkbox" name="group-habit-day" value="0" checked data-testid="group-day-sun" /><span>Nd</span></label>
+                  </div>
+                </div>
+              </form>
+              <div id="group-habits-list" class="group-habits-list" data-testid="group-habits-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>Dane osobiste są przechowywane lokalnie. Dane grupowe są synchronizowane online.</p>
+    </footer>
+    
+    <div id="create-group-modal" class="modal hidden" data-testid="modal-create-group">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Utwórz nową grupę</h3>
+          <button class="modal-close-btn btn btn-icon" data-testid="button-close-create-group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="create-group-form" data-testid="form-create-group">
+            <div class="form-group">
+              <label for="new-group-name">Nazwa grupy</label>
+              <input type="text" id="new-group-name" class="input" placeholder="np. Rodzina, Przyjaciele..." required data-testid="input-new-group-name" />
+            </div>
+            <div class="form-group">
+              <label for="new-group-description">Opis (opcjonalnie)</label>
+              <textarea id="new-group-description" class="input textarea" placeholder="Krótki opis grupy..." data-testid="input-new-group-description"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full" data-testid="button-submit-create-group">Utwórz grupę</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="join-group-modal" class="modal hidden" data-testid="modal-join-group">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Dołącz do grupy</h3>
+          <button class="modal-close-btn btn btn-icon" data-testid="button-close-join-group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="join-group-form" data-testid="form-join-group">
+            <div class="form-group">
+              <label for="invite-code-input">Kod zaproszenia</label>
+              <input type="text" id="invite-code-input" class="input" placeholder="Wklej kod zaproszenia..." required data-testid="input-invite-code" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-full" data-testid="button-submit-join-group">Dołącz do grupy</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="invite-modal" class="modal hidden" data-testid="modal-invite">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Zaproś do grupy</h3>
+          <button class="modal-close-btn btn btn-icon" data-testid="button-close-invite">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-description">Udostępnij ten kod zaproszenia, aby inni mogli dołączyć do grupy:</p>
+          <div class="share-link-container">
+            <input type="text" id="invite-code-display" class="input" readonly data-testid="input-invite-code-display" />
+            <button id="copy-invite-btn" class="btn btn-primary" data-testid="button-copy-invite">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Kopiuj
+            </button>
+          </div>
+          <p id="invite-copy-success" class="copy-success hidden">Kod skopiowany!</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="share-modal" class="modal hidden" data-testid="modal-share">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Udostępnij dashboard</h3>
+          <button id="modal-close" class="btn btn-icon" data-testid="button-modal-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-description">Skopiuj poniższy link, aby udostępnić swój dashboard w trybie tylko do odczytu:</p>
+          <div class="share-link-container">
+            <input type="text" id="share-link-input" class="input" readonly data-testid="input-share-link" />
+            <button id="copy-link-btn" class="btn btn-primary" data-testid="button-copy-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Kopiuj
+            </button>
+          </div>
+          <p id="copy-success" class="copy-success hidden">Link skopiowany!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="edit-habit-modal" class="modal hidden" data-testid="modal-edit-habit">
+    <div class="modal-overlay" data-testid="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edytuj nawyk</h3>
+        <button type="button" class="btn-close" id="close-edit-modal" data-testid="button-close-edit-modal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="edit-habit-form" class="edit-habit-form" data-testid="form-edit-habit">
+        <input type="hidden" id="edit-habit-id" />
+        <input type="hidden" id="edit-habit-is-group" />
+        <input type="hidden" id="edit-habit-group-id" />
+        <div class="form-row">
+          <label for="edit-habit-name">Nazwa</label>
+          <input type="text" id="edit-habit-name" class="input" required data-testid="input-edit-habit-name" />
+        </div>
+        <div class="form-row">
+          <label for="edit-habit-category">Kategoria</label>
+          <select id="edit-habit-category" class="select" data-testid="select-edit-category">
+            <option value="health">Zdrowie</option>
+            <option value="work">Praca</option>
+            <option value="personal">Rozwój</option>
+            <option value="other">Inne</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Dni tygodnia</label>
+          <div class="days-selector" data-testid="edit-days-selector">
+            <label class="day-checkbox"><input type="checkbox" name="edit-habit-day" value="1" checked /><span>Pn</span></label>
+            <label class="day-checkbox"><input type="checkbox" name="edit-habit-day" value="2" checked /><span>Wt</span></label>
+            <label class="day-checkbox"><input type="checkbox" name="edit-habit-day" value="3" checked /><span>Sr</span></label>
+            <label class="day-checkbox"><input type="checkbox" name="edit-habit-day" value="4" checked /><span>Cz</span></label>
+            <label class="day-checkbox"><input type="checkbox" name="edit-habit-day" value="5" checked /><span>Pt</span></label>
+            <label class="day-checkbox"><input type="checkbox" name="edit-habit-day" value="6" checked /><span>Sb</span></label>
+            <label class="day-checkbox"><input type="checkbox" name="edit-habit-day" value="0" checked /><span>Nd</span></label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-edit-modal" data-testid="button-cancel-edit">Anuluj</button>
+          <button type="submit" class="btn btn-primary" data-testid="button-save-edit">Zapisz</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="edit-group-modal" class="modal hidden" data-testid="modal-edit-group">
+    <div class="modal-overlay" data-testid="modal-overlay-group"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edytuj grupę</h3>
+        <button type="button" class="btn-close" id="close-edit-group-modal" data-testid="button-close-edit-group-modal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="edit-group-form" class="edit-habit-form" data-testid="form-edit-group">
+        <input type="hidden" id="edit-group-id" />
+        <div class="form-row">
+          <label for="edit-group-name">Nazwa grupy</label>
+          <input type="text" id="edit-group-name" class="input" required data-testid="input-edit-group-name" />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-edit-group-modal" data-testid="button-cancel-edit-group">Anuluj</button>
+          <button type="submit" class="btn btn-primary" data-testid="button-save-edit-group">Zapisz</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
